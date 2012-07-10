@@ -9,9 +9,9 @@
   = render "leads/status",         :f => f
   = render "leads/contact",        :f => f
   = render "leads/web",            :f => f
-  = render "fields/groups", :f => f
+  = render "fields/groups",        :f => f
   = render "leads/permissions",    :f => f
-
+  = render "leads/vinform",        :f => f
   .buttonbar
     - if Setting.compound_address
       = f.submit t(:create_lead), :onclick => "crm.clear_all_hints()"
@@ -19,3 +19,12 @@
       = f.submit t(:create_lead)
     #{t :or}
     = link_to_cancel new_lead_path
+- unless @result.nil?
+  - @result.first[1].each do |i|
+    - i.each_pair do |key, value|
+      = "#{key}"
+      %br
+      = "#{value}"
+      %br
+      %br
+      %br 

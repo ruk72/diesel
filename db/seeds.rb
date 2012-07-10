@@ -5,6 +5,7 @@
 #
 #   cities = City.create([{ :name => 'Chicago' }, { :name => 'Copenhagen' }])
 #   Mayor.create(:name => 'Daley', :city => cities.first)
-
+  User.create(:username => "rober", :email=> "rober@diesel.com", :password => "rober123", :admin => "true")
+    
 #~ require Rails.root.join('db/seeds/fields')
 

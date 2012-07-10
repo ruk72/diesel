@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120405080742) do
+ActiveRecord::Schema.define(:version => 20120706043624) do
 
   create_table "account_contacts", :force => true do |t|
     t.integer  "account_id"
@@ -82,6 +82,28 @@ ActiveRecord::Schema.define(:version => 20120405080742) do
   end
 
   add_index "addresses", ["addressable_id", "addressable_type"], :name => "index_addresses_on_addressable_id_and_addressable_type"
+
+  create_table "api_leads", :force => true do |t|
+    t.string   "id_api"
+    t.string   "makeId_api"
+    t.string   "year_api"
+    t.string   "makeName_api"
+    t.string   "makeNiceName_api"
+    t.string   "modelId_api"
+    t.string   "modelName_api"
+    t.string   "modelNiceName_api"
+    t.string   "modelYearId_api"
+    t.string   "transmissionType_api"
+    t.string   "engineCompressorType_api"
+    t.string   "engineFuelType_api"
+    t.string   "engineCylinder_api"
+    t.string   "engineSize_api"
+    t.string   "price_api"
+    t.datetime "created_at",               :null => false
+    t.datetime "updated_at",               :null => false
+    t.integer  "lead_id"
+    t.boolean  "vintype"
+  end
 
   create_table "avatars", :force => true do |t|
     t.integer  "user_id"
@@ -255,6 +277,8 @@ ActiveRecord::Schema.define(:version => 20120405080742) do
     t.string   "background_info"
     t.string   "skype",            :limit => 128
     t.text     "subscribed_users"
+    t.string   "vin"
+    t.string   "vin2"
   end
 
   add_index "leads", ["assigned_to"], :name => "index_leads_on_assigned_to"
@@ -368,6 +392,14 @@ ActiveRecord::Schema.define(:version => 20120405080742) do
   add_index "tasks", ["assigned_to"], :name => "index_tasks_on_assigned_to"
   add_index "tasks", ["user_id", "name", "deleted_at"], :name => "index_tasks_on_user_id_and_name_and_deleted_at", :unique => true
 
+  create_table "ti_vins", :force => true do |t|
+    t.integer  "actual_trade_value"
+    t.integer  "odo_reading"
+    t.integer  "api_lead_id"
+    t.datetime "created_at",         :null => false
+    t.datetime "updated_at",         :null => false
+  end
+
   create_table "users", :force => true do |t|
     t.string   "username",            :limit => 32, :default => "",    :null => false
     t.string   "email",               :limit => 64, :default => "",    :null => false
@@ -407,9 +439,9 @@ ActiveRecord::Schema.define(:version => 20120405080742) do
   add_index "users", ["username", "deleted_at"], :name => "index_users_on_username_and_deleted_at", :unique => true
 
   create_table "versions", :force => true do |t|
-    t.string   "item_type",      :null => false
-    t.integer  "item_id",        :null => false
-    t.string   "event",          :null => false
+    t.string   "item_type",                     :null => false
+    t.integer  "item_id",                       :null => false
+    t.string   "event",          :limit => 512, :null => false
     t.string   "whodunnit"
     t.text     "object"
     t.datetime "created_at"
@@ -419,5 +451,15 @@ ActiveRecord::Schema.define(:version => 20120405080742) do
   end
 
   add_index "versions", ["item_type", "item_id"], :name => "index_versions_on_item_type_and_item_id"
+  add_index "versions", ["whodunnit"], :name => "index_versions_on_whodunnit"
+
+  create_table "voi_vins", :force => true do |t|
+    t.integer  "selling_price"
+    t.integer  "stock_no"
+    t.integer  "odo_reading"
+    t.integer  "api_lead_id"
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
+  end
 
 end

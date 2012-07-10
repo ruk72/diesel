@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+
   resources :lists
   
   root :to => 'home#index'
@@ -89,6 +90,8 @@ Rails.application.routes.draw do
       post :auto_complete
       post :redraw
       get :versions
+      get :vin_search
+      get :vin_new
     end
     member do
       get  :convert

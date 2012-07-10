@@ -22,9 +22,8 @@ class LeadsController < EntitiesController
   # GET /leads
   #----------------------------------------------------------------------------
   def index
-    @leads = get_leads(:page => params[:page])
-    @result = JSON.parse(open('http://api.edmunds.com/v1/api/vehicle-directory-ajax/findmakes?api_key=ezd3gafeked243drd7j7f27k&fmt=json').read)
-    respond_with(@leads)
+    @leads = get_leads(:page => params[:page])   
+    @result = JSON.parse(open("http://api.edmunds.com/v1/api/toolsrepository/vindecoder?vin=JTEBU17R848028574&api_key=ezd3gafeked243drd7j7f27k&fmt=json").read)  
   end
 
   # GET /leads/1
@@ -42,7 +41,8 @@ class LeadsController < EntitiesController
   #----------------------------------------------------------------------------
   def new
     @lead.attributes = {:user => @current_user, :access => Setting.default_access}
-    @users = User.except(@current_user)
+    @users = User.except(@current_user)    
+
     get_campaigns
 
     if params[:related]
@@ -53,7 +53,7 @@ class LeadsController < EntitiesController
         respond_to_related_not_found(model) and return
       end
     end
-
+     
     respond_with(@lead)
   end
 
@@ -75,19 +75,50 @@ class LeadsController < EntitiesController
   def create
     @users = User.except(@current_user)
     get_campaigns
-
     respond_with(@lead) do |format|
       if @lead.save_with_permissions(params)
-        if called_from_index_page?
+        vin_search(@lead.vin, @lead.vin2, @lead.id)
+        if called_from_index_page?                  
           @leads = get_leads
           get_data_for_sidebar
         else
           get_data_for_sidebar(:campaign)
         end
+        
       end
     end
   end
-
+  # Method for VIN.
+  def vin_search(vin, vin2, id)
+    @result = [JSON.parse(open("http://api.edmunds.com/v1/api/toolsrepository/vindecoder?vin=#{vin}&api_key=ezd3gafeked243drd7j7f27k&fmt=json").read), JSON.parse(open("http://api.edmunds.com/v1/api/toolsrepository/vindecoder?vin=#{vin2}&api_key=ezd3gafeked243drd7j7f27k&fmt=json").read)]
+    cv = 0
+    @result.each do |r|
+      c = 1
+      r.first[1].each do |i|
+        i.each_pair do |key, value|
+          ApiLead.column_names.each do |column|             
+           if column == "#{key}_api"
+             if c == 1
+             @apile = ApiLead.create(column => value)
+             @apile.update_attribute(:lead_id, id)
+             @apile.update_attribute(:vintype, cv)
+             cv = 1
+             else
+             @apile.update_attribute(column, value)
+             end             
+             c += 1
+           end
+          end
+        end
+       end
+     end   
+  end
+  
+ # Method for VOI and TI API.
+ def vin_new
+   @ti_vin = TiVin.new
+   @voi_vin = VoiVin.new
+ end
   # PUT /leads/1
   #----------------------------------------------------------------------------
   def update

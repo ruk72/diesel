@@ -37,6 +37,13 @@
   %li
     %dt= truncate((@lead.assigned_to ? @lead.assignee.full_name : @lead.user.full_name), :length => 16)
     %tt #{t :assigned_to}:
+  %li
+    %dt= ApiLead.find_by_lead_id_and_vintype(@lead.id, 0).modelId_api
+    %label Interested Vehicle :
+  %li
+    %dt= ApiLead.find_by_lead_id_and_vintype(@lead.id, 1).modelId_api
+    %label Trade In Vehicle :
+
   %li.last
     %dt
       - if @lead.campaign
@@ -44,6 +51,7 @@
       - else
         #{t :n_a}
     %tt #{t :campaign}:
+  
 
   - unless @lead.background_info.blank?
     .caption #{t :background_info}
