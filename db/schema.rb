@@ -102,7 +102,7 @@ ActiveRecord::Schema.define(:version => 20120706043624) do
     t.datetime "created_at",               :null => false
     t.datetime "updated_at",               :null => false
     t.integer  "lead_id"
-    t.boolean  "vintype"
+    t.integer  "vintype"
   end
 
   create_table "avatars", :force => true do |t|
